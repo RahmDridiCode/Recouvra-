@@ -14,10 +14,10 @@ describe('statsController.stats', () => {
 
   it('returns counts', async () => {
     Invoice.countDocuments
-      .mockResolvedValueOnce(10) // total
-      .mockResolvedValueOnce(4) // unpaid
-      .mockResolvedValueOnce(5) // paid
-      .mockResolvedValueOnce(1); // overdue
+      .mockResolvedValueOnce(10) 
+      .mockResolvedValueOnce(4) 
+      .mockResolvedValueOnce(5) 
+      .mockResolvedValueOnce(1); 
 
     const req = {};
     const res = mockRes();

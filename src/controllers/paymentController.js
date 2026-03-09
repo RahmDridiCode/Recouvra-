@@ -1,5 +1,6 @@
 const Payment = require('../models/Payment');
 const Invoice = require('../models/Invoice');
+const Client = require('../models/Client');
 
 async function createPayment(req, res) {
   try {
@@ -31,7 +32,6 @@ async function listPayments(req, res) {
 
   if (user.role === 'agent') {
     const clients = await Client.find({ assignedTo: user._id }).select('_id');
-
     const invoices = await Invoice.find({
       client: { $in: clients.map(c => c._id) }
     }).select('_id');

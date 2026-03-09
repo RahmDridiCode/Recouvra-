@@ -15,11 +15,11 @@ describe('clientController', () => {
 
     it('createClient - success', async () => {
         const payload = { name: 'C' };
-        // Crée une instance factice avec save() mocké
+        
         const mockClientInstance = {
             ...payload,
             _id: 'c1',
-            save: jest.fn().mockResolvedValue(true) // save résout juste true
+            save: jest.fn().mockResolvedValue(true) 
         };
         Client.mockImplementation(() => mockClientInstance);
 
@@ -29,7 +29,7 @@ describe('clientController', () => {
         await createClient(req, res);
 
         expect(res.status).toHaveBeenCalledWith(201);
-        expect(res.json).toHaveBeenCalledWith(mockClientInstance); // on check l'instance entière
+        expect(res.json).toHaveBeenCalledWith(mockClientInstance); 
     });
     
   it('createClient - error', async () => {

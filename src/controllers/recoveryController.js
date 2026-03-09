@@ -1,4 +1,6 @@
 const RecoveryAction = require('../models/RecoveryAction');
+const Client = require('../models/Client');
+const Invoice = require('../models/Invoice');
 
 async function createAction(req, res) {
   try {
@@ -15,9 +17,7 @@ async function listActions(req, res) {
   let filter = {};
 
   if (user.role === 'agent') {
-
     const clients = await Client.find({ assignedTo: user._id }).select('_id');
-
     const invoices = await Invoice.find({
       client: { $in: clients.map(c => c._id) }
     }).select('_id');

@@ -61,7 +61,6 @@ describe('paymentController', () => {
     it('listPayments - admin sees all', async () => {
         const payments = [{ _id: 'p1' }, { _id: 'p2' }];
 
-        // Mock chain find().populate()
         Payment.find.mockReturnValue({
             populate: jest.fn().mockResolvedValue(payments),
         });
@@ -72,6 +71,26 @@ describe('paymentController', () => {
         await listPayments(req, res);
 
         expect(Payment.find).toHaveBeenCalledWith({});
+        expect(res.json).toHaveBeenCalledWith(payments);
+    });
+    
+    it('listPayments - agent filters by client and invoice', async () => {
+        const clients = [{ _id: 'c1' }];
+        const invoices = [{ _id: 'i1' }];
+        const payments = [{ _id: 'p1' }];
+
+        Client.find.mockReturnValue({ select: jest.fn().mockResolvedValue(clients) });
+        Invoice.find.mockReturnValue({ select: jest.fn().mockResolvedValue(invoices) });
+        Payment.find.mockReturnValue({ populate: jest.fn().mockResolvedValue(payments) });
+
+        const req = { user: { role: 'agent', _id: 'a1' } };
+        const res = mockRes();
+
+        await listPayments(req, res);
+
+        expect(Client.find).toHaveBeenCalledWith({ assignedTo: 'a1' });
+        expect(Invoice.find).toHaveBeenCalledWith({ client: { $in: ['c1'] } });
+        expect(Payment.find).toHaveBeenCalledWith({ invoice: { $in: ['i1'] } });
         expect(res.json).toHaveBeenCalledWith(payments);
     });
 

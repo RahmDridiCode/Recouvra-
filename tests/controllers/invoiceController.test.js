@@ -16,7 +16,6 @@ describe('invoiceController', () => {
     beforeEach(() => jest.clearAllMocks());
 
     it('createInvoice - success', async () => {
-        // Mock de l'instance Invoice
         const mockSave = jest.fn().mockResolvedValue(true);
         const invoiceInstance = { _id: 'i1', save: mockSave };
         Invoice.mockImplementation(() => invoiceInstance);
@@ -46,7 +45,7 @@ describe('invoiceController', () => {
 
     it('listInvoices - admin returns all', async () => {
         const invoices = [{ _id: 'i1' }];
-        // Invoice.find().populate() doit renvoyer les factures
+      
         Invoice.find.mockReturnValue({ populate: jest.fn().mockResolvedValue(invoices) });
 
         const req = { user: { role: 'admin' } };
@@ -60,16 +59,13 @@ describe('invoiceController', () => {
 
     it('listInvoices - agent filters by client', async () => {
         const clients = [{ _id: 'c1' }];
-
-        // Mock de Client.find().select()
+        const mockInvoices = [{ _id: 'i1', amount: 100 }, { _id: 'i2', amount: 200 }];
+      
         Client.find.mockReturnValue({
             select: jest.fn().mockResolvedValue(clients)
         });
 
-        // Mock de Invoice.find().populate()
-        Invoice.find.mockReturnValue({
-            populate: jest.fn().mockResolvedValue([])
-        });
+        Invoice.find.mockReturnValue({ populate: jest.fn().mockResolvedValue(mockInvoices) });
 
         const req = { user: { role: 'agent', _id: 'a1' } };
         const res = mockRes();
@@ -78,6 +74,8 @@ describe('invoiceController', () => {
 
         expect(Client.find).toHaveBeenCalledWith({ assignedTo: 'a1' });
         expect(Invoice.find).toHaveBeenCalledWith({ client: { $in: clients.map(c => c._id) } });
+        expect(res.json).toHaveBeenCalledWith(mockInvoices);
+        
     });
 
     it('updateInvoice - not found', async () => {
@@ -106,7 +104,6 @@ describe('invoiceController', () => {
 
     it('deleteInvoice - success', async () => {
         Invoice.findByIdAndDelete.mockResolvedValue({});
-
         const req = { params: { id: 'x' } };
         const res = mockRes();
 
