@@ -1,0 +1,472 @@
+openapi: 3.0.0
+info:
+  title: Recouvra+
+  version: 0.1.0
+
+paths:
+
+  /api/auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: admin@example.com
+                password:
+                  type: string
+                  example: password123
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: OK
+
+  /api/users:
+    post:
+      summary: Create user (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateInput'
+      responses:
+        '201':
+          description: Created
+
+    get:
+      summary: List users (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+
+  /api/users/{id}:
+    put:
+      summary: Update user (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateInput'
+      responses:
+        '200':
+          description: Updated
+
+    delete:
+      summary: Delete user (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted
+
+
+  /api/clients:
+    get:
+      summary: List clients
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientCreateInput'
+
+    post:
+      summary: Create client (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientCreateInput'
+      responses:
+        '201':
+          description: Created
+
+  /api/clients/{id}:
+    put:
+      summary: Update client (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientUpdateInput'
+      responses:
+        '200':
+          description: Updated
+
+    delete:
+      summary: Delete client (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted
+
+
+  /api/invoices:
+    get:
+      summary: List invoices
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvoiceCreateInput'
+
+    post:
+      summary: Create invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceCreateInput'
+      responses:
+        '201':
+          description: Created
+
+  /api/invoices/{id}:
+    put:
+      summary: Update invoice (admin/manager)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceUpdateInput'
+      responses:
+        '200':
+          description: Updated
+
+    delete:
+      summary: Delete invoice (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted
+
+
+  /api/payments:
+    post:
+      summary: Create payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateInput'
+      responses:
+        '201':
+          description: Created
+
+    get:
+      summary: List payments (admin/manager)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentCreateInput'
+
+  /api/payments/{id}:
+    put:
+      summary: Update payment (admin/manager/agent)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentUpdateInput'
+      responses:
+        '200':
+          description: Updated
+        '400':
+          description: Invalid input
+        '404':
+          description: Payment not found
+        '500':
+          description: Internal server error
+
+
+  /api/recovery-actions:
+    get:
+      summary: List recovery actions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecoveryCreateInput'
+
+    post:
+      summary: Create recovery action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoveryCreateInput'
+      responses:
+        '201':
+          description: Created
+
+
+  /api/stats:
+    get:
+      summary: Get simple invoice stats (admin/manager)
+      responses:
+        '200':
+          description: OK
+
+
+security:
+  - bearerAuth: []
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  schemas:
+
+    UserCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john@example.com
+        password:
+          type: string
+          example: secret123
+        role:
+          type: string
+          enum: [admin, manager, agent]
+          example: agent
+      required:
+        - name
+        - email
+        - password
+
+
+    UserUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, manager, agent]
+
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 60d21b4667d0d8992e610c85
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+
+
+    ClientCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: ABC Corporation
+        email:
+          type: string
+          example: contact@abc.com
+        phone:
+          type: string
+          example: +33123456789
+        address:
+          type: string
+          example: 123 Business Ave, Paris
+        assignedTo:
+          type: string
+          example: 60d21b4667d0d8992e610c85
+      required:
+        - name
+
+
+    ClientUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        assignedTo:
+          type: string
+
+
+    InvoiceCreateInput:
+      type: object
+      properties:
+        client:
+          type: string
+          example: 60d21b4667d0d8992e610c86
+        amount:
+          type: number
+          example: 1500.50
+        dueDate:
+          type: string
+          format: date
+          example: 2024-12-31
+        status:
+          type: string
+          enum: [unpaid, paid, overdue]
+          example: unpaid
+      required:
+        - client
+        - amount
+        - dueDate
+
+
+    InvoiceUpdateInput:
+      type: object
+      properties:
+        client:
+          type: string
+        amount:
+          type: number
+        dueDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [unpaid, paid, overdue]
+
+
+    PaymentCreateInput:
+      type: object
+      properties:
+        invoice:
+          type: string
+          example: 60d21b4667d0d8992e610c87
+        amount:
+          type: number
+          example: 1500.50
+        method:
+          type: string
+          enum: [cash, bank transfer, cheque]
+          example: bank transfer
+      required:
+        - invoice
+        - amount
+        - method
+
+
+    PaymentUpdateInput:
+      type: object
+      properties:
+        invoice:
+          type: string
+        amount:
+          type: number
+        method:
+          type: string
+          enum: [cash, bank transfer, cheque]
+
+
+    RecoveryCreateInput:
+      type: object
+      properties:
+        invoice:
+          type: string
+          example: 60d21b4667d0d8992e610c87
+        actionType:
+          type: string
+          enum: [email, phone call, letter]
+          example: email
+        description:
+          type: string
+          example: Premier rappel de paiement envoyé
+      required:
+        - invoice
+        - actionType
