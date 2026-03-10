@@ -7,7 +7,7 @@ const Client = require('../src/models/Client');
 let token;
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/recouvra_test', { useNewUrlParser: true, useUnifiedTopology: true });
+  await mongoose.connect(process.env.MONGO_TEST_URI || 'mongodb://localhost:27017/recouvra_test', { useNewUrlParser: true, useUnifiedTopology: true });
   await mongoose.connection.db.dropDatabase();
   await User.create({ name: 'Admin', email: 'admin3@example.com', password: 'password', role: 'admin' });
   const res = await request(app).post('/api/auth/login').send({ email: 'admin3@example.com', password: 'password' });

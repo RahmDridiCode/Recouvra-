@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { hashPassword } = require('../utils/hash');
 
 async function createUser(req, res) {
   const { name, email, password, role } = req.body;
@@ -20,10 +21,17 @@ async function listUsers(req, res) {
 
 async function updateUser(req, res) {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = { ...req.body };
+
   try {
+    if (updates.password) {
+      updates.password = await hashPassword(updates.password);
+    }
+
     const user = await User.findByIdAndUpdate(id, updates, { new: true }).select('-password');
+
     if (!user) return res.status(404).json({ message: 'Not found' });
+
     res.json(user);
   } catch (err) {
     res.status(500).json({ message: err.message });

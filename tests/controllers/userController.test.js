@@ -53,7 +53,7 @@ describe('userController', () => {
   });
 
     it('updateUser - not found', async () => {
-        // Mock findByIdAndUpdate pour qu'il retourne un objet avec select, qui résout null
+      
         User.findByIdAndUpdate = jest.fn().mockReturnValue({
             select: jest.fn().mockResolvedValue(null),
         });
@@ -69,12 +69,17 @@ describe('userController', () => {
 
   it('updateUser - success', async () => {
     const updated = { _id: 'x', name: 'n' };
-    User.findByIdAndUpdate.mockResolvedValue({ select: jest.fn().mockResolvedValue(updated) });
+
+    User.findByIdAndUpdate.mockReturnValue({
+      select: jest.fn().mockResolvedValue(updated)
+    });
+
     const req = { params: { id: 'x' }, body: {} };
     const res = mockRes();
+
     await updateUser(req, res);
-    // because controller chains select after findByIdAndUpdate
-    expect(res.json).toHaveBeenCalled();
+    expect(User.findByIdAndUpdate).toHaveBeenCalledWith('x', {}, { new: true });
+    expect(res.json).toHaveBeenCalledWith(updated);
   });
 
   it('deleteUser - success', async () => {

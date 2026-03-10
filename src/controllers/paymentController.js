@@ -9,6 +9,9 @@ async function createPayment(req, res) {
     if (!invoice) {
       return res.status(404).json({ message: 'Invoice not found' });
     }
+    if (invoice.status === 'paid') {
+      return res.status(400).json({ message: 'Vous avez déjà payé cette facture' });
+    }
     if (amount !== invoice.amount) {
       return res.status(400).json({
         message: `Payment amount must be exactly ${invoice.amount}`
