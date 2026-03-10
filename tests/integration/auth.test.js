@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('../src/app');
+const app = require('../../src/app');
 const mongoose = require('mongoose');
-const User = require('../src/models/User');
+const User = require('../../src/models/User');
 
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGO_TEST_URI || 'mongodb://localhost:27017/recouvra_test', { useNewUrlParser: true, useUnifiedTopology: true });
