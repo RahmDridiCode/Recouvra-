@@ -34,9 +34,16 @@ const paymentSchema = Joi.object({
   date: Joi.date().optional()
 });
 
+// For PUT /payments/:id — only amount and method can be updated, invoice is NOT sent
+const paymentUpdateSchema = Joi.object({
+  amount: Joi.number().positive().optional(),
+  method: Joi.string().valid('cash', 'bank transfer', 'cheque').optional(),
+  date: Joi.date().optional()
+});
+
 const recoverySchema = Joi.object({
   invoice: Joi.string().hex().length(24).required(),
-  actionType: Joi.string().valid('email', 'phone call', 'letter').required(),
+  actionType: Joi.string().valid('email', 'sms').required(),
   description: Joi.string().allow('', null),
   date: Joi.date().optional()
 });
@@ -47,5 +54,6 @@ module.exports = {
   clientSchema,
   invoiceSchema,
   paymentSchema,
+  paymentUpdateSchema,
   recoverySchema
 };

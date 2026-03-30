@@ -213,7 +213,7 @@ paths:
           description: Created
 
     get:
-      summary: List payments (admin/manager)
+      summary: List payments (admin/manager/agent)
       responses:
         '200':
           description: OK
@@ -462,7 +462,7 @@ components:
           example: 60d21b4667d0d8992e610c87
         actionType:
           type: string
-          enum: [email, phone call, letter]
+          enum: [email, sms, phone call, letter]
           example: email
         description:
           type: string

@@ -41,7 +41,10 @@ async function listPayments(req, res) {
 
     filter.invoice = { $in: invoices.map(i => i._id) };
   }
-  const payments = await Payment.find(filter).populate('invoice');
+  const payments = await Payment.find(filter).populate({
+    path: 'invoice',
+    populate: { path: 'client' }
+  });
 
   res.json(payments);
 }
